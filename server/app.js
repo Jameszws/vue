@@ -40,7 +40,7 @@ if(NODE_ENV === 'development'){
 	}));
     app.use(webpackHotMiddleware(compiler));
 
-    router.get('/index', function(req, res){
+    router.get('*', function(req, res){
         res.render('src/index.html', {
             env: NODE_ENV
         });

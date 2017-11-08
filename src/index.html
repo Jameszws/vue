@@ -4,12 +4,21 @@
     <meta charset="UTF-8">
     <title>Vue example</title>
     <meta name="viewport" content="width=device-width,initial-scale=0,maximum-scale=1,minimum-scale=1">
+    <% if(process.env.NODE_ENV=="production"){ %>        
+        <link rel="stylesheet" href="../static/css/app.css?v=<%=fileVersion%>" />
+    <%}%>
 </head>
 <body>
     <div id="app">
         <app></app>
     </div>
-    <script src="dev/common.min.js"></script>
-    <script src="dev/app.min.js"></script>
+    <% if(process.env.NODE_ENV=="development"){ %>
+        <script type="text/javascript" src="dev/common.min.js"></script>
+        <script type="text/javascript" src="dev/app.min.js"></script>
+    <% }else if(process.env.NODE_ENV=="production"){ %>        
+        <script type="text/javascript" src="../js/common.min.js?v=<%=fileVersion%>"></script>
+        <script type="text/javascript" src="../js/app.min.js?v=<%=fileVersion%>"></script>
+    <%}%>  
+    
 </body>
 </html>

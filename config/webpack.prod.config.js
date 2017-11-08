@@ -11,9 +11,8 @@ var fileVersion = new Date().getTime();
 module.exports = {    
 
     entry:{
-        indexController:['./src/controllers/indexController.js'],
-        detailController:['./src/controllers/detailController.js'],
-    }, //多页应用，多个入口文件
+        app:['./src/app.js'],
+    },
     
     output: {
         publicPath:"../../",
@@ -22,9 +21,9 @@ module.exports = {
     },
 
     resolve: { 
-        extensions: ['.js'],
+        extensions: ['.js','.vue'],
         alias: {
-            bootstrap:  path.resolve(__dirname, '..', 'node_modules/bootstrap/dist/css/bootstrap.min.css')
+            vue: 'vue/dist/vue.js'
         }
     },
 
@@ -41,22 +40,36 @@ module.exports = {
                     }
                 },
                 exclude: /node_modules/
-            },                  
-            { test: /\.(png|jpg|jpeg|gif)$/,use: 'url-loader?limit=8192&name=static/images/[name].[ext]'},
-            { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, use: "file-loader?name=static/images/[name].[ext]" },
-            { test: /\.(woff|woff2)$/, use:"url-loader?prefix=font/&limit=5000&name=static/images/[name].[ext]" },
-            { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, use: "url-loader?limit=10000&mimetype=application/octet-stream&name=static/images/[name].[ext]" },
-            { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, use: "url-loader?limit=10000&mimetype=image/svg+xml&name=static/images/[name].[ext]" },
+            },
+            { test:/\.vue$/,loader:'vue-loader'},            
+            {
+                test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+                loader: 'url-loader',
+                options: {
+                    limit: 10000,
+                    name: 'img/[name].[hash:7].[ext]'
+                }
+            },
+            {
+                test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+                loader: 'url-loader',
+                options: {
+                    limit: 10000,
+                    name: 'media/[name].[hash:7].[ext]'
+                }
+            },
+            {
+                test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+                loader: 'url-loader',
+                options: {
+                    limit: 10000,
+                    name: 'fonts/[name].[hash:7].[ext]'
+                }
+            }
         ]
     },
 
     plugins: [
-
-        new webpack.ProvidePlugin({
-            $: "jquery",
-            jQuery: "jquery",
-            "window.jQuery": "jquery"
-        }),
 
         new webpack.DefinePlugin({
             'process.env': {
@@ -69,30 +82,6 @@ module.exports = {
 
         new ExtractTextPlugin('static/css/[name].css'),
 
-        new HtmlWebpackPlugin({
-            filename: 'views/index.html',
-            template: 'src/views/index.html',
-            inject: 'body',
-            hash: true,
-            chunks: [],   // 这个模板对应上面那个节点(注意：views中会通过express按照环境配置)
-            minify: { //压缩HTML文件    
-                removeComments: false, //移除HTML中的注释
-                collapseWhitespace: false //删除空白符与换行符
-            }
-        }),
-
-        new HtmlWebpackPlugin({
-            filename: 'views/detail.html',
-            template: 'src/views/detail.html',
-            inject: 'body',
-            hash: true,
-            chunks: [],   // 这个模板对应上面那个节点(注意：views中会通过express按照环境配置)
-            minify: { //压缩HTML文件    
-                removeComments: false, //移除HTML中的注释
-                collapseWhitespace: false //删除空白符与换行符
-            }
-        }),
-        
         //压缩配置
         new webpack.optimize.UglifyJsPlugin({
             compress: {
@@ -105,6 +94,18 @@ module.exports = {
             },
             mangle:{
                 except:['$super','$','exports','require']
+            }
+        }),
+
+        new HtmlWebpackPlugin({
+            filename: 'views/index.html',
+            template: 'src/index.html',
+            inject: 'body',
+            hash: true,
+            chunks: [],   // 这个模板对应上面那个节点(注意：views中会通过express按照环境配置)
+            minify: { //压缩HTML文件    
+                removeComments: false, //移除HTML中的注释
+                collapseWhitespace: false //删除空白符与换行符
             }
         }),
         

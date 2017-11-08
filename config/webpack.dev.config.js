@@ -11,8 +11,8 @@ module.exports = {
     devtool: 'source-map',
 
     entry:{
-        app:['./src/main.js'],
-    }, //多页应用，多个入口文件
+        app:['./src/app.js'],
+    },
     
     output: {
         publicPath:"/dev/",
@@ -21,7 +21,7 @@ module.exports = {
     },
     
     resolve: { 
-        extensions: ['.js'],
+        extensions: ['.js','.vue'],
         alias: {
             vue: 'vue/dist/vue.js'
             //bootstrap:  path.resolve(__dirname, '..', 'node_modules/bootstrap/dist/css/bootstrap.min.css')
@@ -42,17 +42,35 @@ module.exports = {
                 },
                 exclude: /node_modules/
             },
-            { test:/\.vue$/,loader:'vue-loader'},
+            { test:/\.vue$/,loader:'vue-loader'},            
+            {
+                test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+                loader: 'url-loader',
+                options: {
+                    limit: 10000,
+                    name: 'img/[name].[hash:7].[ext]'
+                }
+            },
+            {
+                test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+                loader: 'url-loader',
+                options: {
+                    limit: 10000,
+                    name: 'media/[name].[hash:7].[ext]'
+                }
+            },
+            {
+                test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+                loader: 'url-loader',
+                options: {
+                    limit: 10000,
+                    name: 'fonts/[name].[hash:7].[ext]'
+                }
+            }
         ]
     },
 
     plugins: [
-
-        new webpack.ProvidePlugin({
-            $: "jquery",
-            jQuery: "jquery",
-            "window.jQuery": "jquery"
-        }),
         
         new commonsPlugin('common'),
         
